@@ -8,7 +8,7 @@ const main = async () => {
       return 5
     },
     {
-      retries: 0,
+      calls: 1,
     }
   )
   console.log(result)
@@ -19,7 +19,7 @@ const main = async () => {
       throw new Error('error')
     },
     {
-      retries: 1,
+      calls: 2,
       onCallError: ({ error, call, maxCalls }) =>
         console.log(`Call ${call}/${maxCalls}: ${error}`),
       onMaxCallsExceeded: () => console.log('max calls exceeded'),

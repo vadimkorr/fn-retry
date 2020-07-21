@@ -42,6 +42,10 @@ const result = await fnRetry(fn, {
 
 ## API
 
+### **fnRetry**
+
+Base strategy with custom delays
+
 ```js
 fnRetry(fn: Function, options: Object) => Promise
 ```
@@ -55,8 +59,28 @@ Function that should be retried in case of errors
 | Name               | type       | Default      | Description                                                                                                                                      |
 | ------------------ | ---------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | delays             | `Array`    | `[]`         | Represents delays between failed calls, e.g. `[100, 200, 300]` - in case of error fn will be called 4 times, with specified delays between calls |
-| onCallError        | `Function` | `() => null` | Called on failed try with objects as an argument `{ error: Error, try: number, maxCalls: number }`                                               |
+| onCallError        | `Function` | `() => null` | Called on failed call with objects as an argument `{ error: Error, try: number, maxCalls: number }`                                              |
 | onMaxCallsExceeded | `Function` | `() => null` | Called when max number of calls is exceeded                                                                                                      |
+
+### **fnRetryWithFibonacci**
+
+Calls fn with max amount of calls. Waits according to Fibonacci sequence between failed calls, like call fialed -> 1s -> call fialed -> 1s -> call fialed -> 2s -> call fialed -> 3s, etc.
+
+```js
+fnRetryWithFibonacci(fn: Function, options: Object) => Promise
+```
+
+### fn
+
+Function that should be retried in case of errors
+
+### options
+
+| Name               | type       | Default      | Description                                                                                         |
+| ------------------ | ---------- | ------------ | --------------------------------------------------------------------------------------------------- |
+| calls              | `number`   | `1`          | Number of calls, e.g. calls = 2: call failed => wait 1 sec => call failed                           |
+| onCallError        | `Function` | `() => null` | Called on failed call with objects as an argument `{ error: Error, try: number, maxCalls: number }` |
+| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of calls is exceeded                                                         |
 
 ## Testing
 

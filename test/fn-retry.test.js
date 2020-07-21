@@ -30,7 +30,7 @@ export const testDelay = async ({
   expect(actual.errorCallsCount).toBe(expected.errorCallsCount)
 }
 
-test('retries specified amount of times if fn is failed', async () => {
+test('calls specified amount of times if fn is failed', async () => {
   await testDelay({
     delays: [100],
     failedCallsMap: [true, true],
@@ -46,7 +46,7 @@ test("doesn't retry if first call is successfull", async () => {
   })
 })
 
-test('retries one time if second call is successfull', async () => {
+test('calls one time if second call is successfull', async () => {
   await testDelay({
     delays: [100, 100],
     failedCallsMap: [true, false, false],
@@ -79,7 +79,7 @@ test('returns value returned by fn passed if called without an error', async () 
   expect(actualValue).toBe(expectedValue)
 })
 
-test('returns value returned by function passed after retries', async () => {
+test('returns value returned by function passed after calls', async () => {
   let calledTimesCount = 0
   const expectedValue = 5
   const fn = async () => {

@@ -1,11 +1,11 @@
-import { getFibonacciMsSequence } from '../src/fn-retry-with-fibonacci/get-fibonacci-ms-sequence'
+import { getFibonacciMsSequenceByCalls } from '../src/fn-retry-with-fibonacci/get-fibonacci-ms-sequence'
 import { fnRetryWithFibonacci } from '../src/fn-retry-with-fibonacci'
 import { anyDelayFulfilled } from '../test/utils/any-delay-fulfilled'
 import { getExecTimeMs } from '../test/utils/get-exec-time-ms'
 import { getTestObject } from '../test/utils/get-test-object'
 
 export const testDelay = async ({
-  retries,
+  calls,
   delays,
   failedCallsMap,
   expectedIsMaxCallsExceeded,
@@ -19,7 +19,7 @@ export const testDelay = async ({
   const fn = getFn()
   const execTime = await getExecTimeMs(() =>
     fnRetryWithFibonacci(fn, {
-      retries,
+      calls,
       onCallError: handleCallError,
       onMaxCallsExceeded: handleMaxCallsExceeded,
     })
@@ -32,56 +32,56 @@ export const testDelay = async ({
   expect(actual.errorCallsCount).toBe(expected.errorCallsCount)
 }
 
-test('retries specified amount of times if fn is failed', async () => {
-  const retries = 1
-  const delays = getFibonacciMsSequence(retries)
+test('calls specified amount of times if fn is failed', async () => {
+  const calls = 2
+  const delays = getFibonacciMsSequenceByCalls(calls)
   await testDelay({
     delays,
-    retries,
+    calls,
     failedCallsMap: [true, true],
     expectedIsMaxCallsExceeded: true,
   })
 })
 
 test("doesn't retry if first call is successfull", async () => {
-  const retries = 1
-  const delays = getFibonacciMsSequence(retries)
+  const calls = 2
+  const delays = getFibonacciMsSequenceByCalls(calls)
   await testDelay({
     delays,
-    retries,
+    calls,
     failedCallsMap: [false, false],
     expectedIsMaxCallsExceeded: false,
   })
 })
 
-test('retries one time if second call is successfull', async () => {
-  const retries = 2
-  const delays = getFibonacciMsSequence(retries)
+test('calls one time if second call is successfull', async () => {
+  const calls = 3
+  const delays = getFibonacciMsSequenceByCalls(calls)
   await testDelay({
     delays,
-    retries,
+    calls,
     failedCallsMap: [true, false, false],
     expectedIsMaxCallsExceeded: false,
   })
 })
 
 test("doesn't retry if delays is empty (calls only ones)", async () => {
-  const retries = 0
-  const delays = getFibonacciMsSequence(retries)
+  const calls = 1
+  const delays = getFibonacciMsSequenceByCalls(calls)
   await testDelay({
     delays,
-    retries,
+    calls,
     failedCallsMap: [false],
     expectedIsMaxCallsExceeded: false,
   })
 })
 
 test("doesn't retry if delays is empty, but call is failed", async () => {
-  const retries = 0
-  const delays = getFibonacciMsSequence(retries)
+  const calls = 1
+  const delays = getFibonacciMsSequenceByCalls(calls)
   await testDelay({
     delays,
-    retries,
+    calls,
     failedCallsMap: [true],
     expectedIsMaxCallsExceeded: true,
   })
@@ -91,17 +91,17 @@ test('returns value returned by fn passed if called without', async () => {
   const expectedValue = 5
   const fn = async () => expectedValue
   const actualValue = await fnRetryWithFibonacci(fn, {
-    retries: 0,
+    calls: 1,
   })
   expect(actualValue).toBe(expectedValue)
 })
 
-test('returns value returned by fn passed after retries', async () => {
-  const retries = 2
+test('returns value returned by fn passed after calls', async () => {
+  const calls = 3
   let calledTimesCount = 0
   const expectedValue = 5
   const fn = async () => {
-    if (calledTimesCount < retries) {
+    if (calledTimesCount < calls - 1) {
       calledTimesCount++
       throw 'error'
     } else {
@@ -110,7 +110,7 @@ test('returns value returned by fn passed after retries', async () => {
     }
   }
   const actualValue = await fnRetryWithFibonacci(fn, {
-    retries,
+    calls,
   })
   expect(actualValue).toBe(expectedValue)
 })
@@ -119,4 +119,12 @@ test('throws an error if wrong fn is passed', () => {
   expect(async () => {
     await fnRetryWithFibonacci('fn')
   }).rejects.toEqual(new Error('Incorrect value for fn'))
+})
+
+test('throws an error if calls is less than 1', () => {
+  expect(async () => {
+    await fnRetryWithFibonacci(() => {}, {
+      calls: 0,
+    })
+  }).rejects.toEqual(new Error('At least one call should be done'))
 })
