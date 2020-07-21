@@ -8,7 +8,7 @@ const modes = {
 }
 
 module.exports = {
-  entry: './src/index.js', // relative to root
+  entry: './src/index.js',
   mode: modes[process.env.NODE_ENV] || 'production',
   output: {
     filename: 'index.js',
