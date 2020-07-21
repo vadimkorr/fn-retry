@@ -44,43 +44,43 @@ const result = await fnRetry(fn, {
 
 ### **fnRetry**
 
-Base strategy with custom delays
+Base strategy with custom delays. Fn will be called at least one time. In case of errors it will wait specified amount of ms (delays array) before the next call.
 
 ```js
 fnRetry(fn: Function, options: Object) => Promise
 ```
 
-### fn
+#### fn
 
 Function that should be retried in case of errors
 
-### options
+#### options
 
 | Name               | type       | Default      | Description                                                                                                                                      |
 | ------------------ | ---------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | delays             | `Array`    | `[]`         | Represents delays between failed calls, e.g. `[100, 200, 300]` - in case of error fn will be called 4 times, with specified delays between calls |
-| onCallError        | `Function` | `() => null` | Called on failed call with objects as an argument `{ error: Error, try: number, maxCalls: number }`                                              |
-| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of calls is exceeded                                                                                                      |
+| onCallError        | `Function` | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, try: number, maxCalls: number }`                                           |
+| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of fn calls is exceeded                                                                                                   |
 
 ### **fnRetryWithFibonacci**
 
-Calls fn with max amount of calls. Waits according to Fibonacci sequence between failed calls, like call fialed -> 1s -> call fialed -> 1s -> call fialed -> 2s -> call fialed -> 3s, etc.
+Calls fn with max amount of calls. Fn will be called at least one time. In case of errors it will wait according to Fibonacci sequence before the next call, like this: call failed -> 1s -> call failed -> 1s -> call failed -> 2s -> call failed -> 3s, etc.
 
 ```js
 fnRetryWithFibonacci(fn: Function, options: Object) => Promise
 ```
 
-### fn
+#### fn
 
 Function that should be retried in case of errors
 
-### options
+#### options
 
-| Name               | type       | Default      | Description                                                                                         |
-| ------------------ | ---------- | ------------ | --------------------------------------------------------------------------------------------------- |
-| calls              | `number`   | `1`          | Number of calls, e.g. calls = 2: call failed => wait 1 sec => call failed                           |
-| onCallError        | `Function` | `() => null` | Called on failed call with objects as an argument `{ error: Error, try: number, maxCalls: number }` |
-| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of calls is exceeded                                                         |
+| Name               | type       | Default      | Description                                                                                            |
+| ------------------ | ---------- | ------------ | ------------------------------------------------------------------------------------------------------ |
+| calls              | `number`   | `1`          | Number of calls, e.g. calls = 2: call failed => wait 1 sec => call failed                              |
+| onCallError        | `Function` | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, try: number, maxCalls: number }` |
+| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of fn calls is exceeded                                                         |
 
 ## Testing
 
