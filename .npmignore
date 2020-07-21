@@ -1,0 +1,20 @@
+# configs
+config
+.eslintrc.js
+.prettierrc.js
+babel.config.js
+jest.config.js
+
+# src
+src
+
+# dependencies
+node_modules
+yarn.lock
+
+# test
+test
+app
+
+# git
+.gitignore
