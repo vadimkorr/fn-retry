@@ -1,6 +1,7 @@
 # fn-retry
 
-Retry failed function call
+Retry failed function call.\
+Dependency-free, tiny (~1.5 kb gzipped) and powerfull.
 
 [![npm](https://img.shields.io/npm/v/fn-retry.svg)](https://www.npmjs.com/package/fn-retry) [![npm](https://img.shields.io/npm/dm/fn-retry.svg)](https://www.npmjs.com/package/fn-retry)
 <br />
