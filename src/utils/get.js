@@ -1,6 +1,2 @@
-export const get = (object, field, defaultValue) => {
-  if (object && object.hasOwnProperty(field)) {
-    return object[field]
-  }
-  return defaultValue
-}
+export const get = (object, field, defaultValue) =>
+  object && object.hasOwnProperty(field) ? object[field] : defaultValue
