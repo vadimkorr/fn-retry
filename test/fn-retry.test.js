@@ -79,13 +79,13 @@ test('returns value returned by fn passed if called without an error', async () 
   expect(actualValue).toBe(expectedValue)
 })
 
-test('returns value returned by function passed after calls', async () => {
+test('returns value returned by fn passed after number of calls', async () => {
   let calledTimesCount = 0
   const expectedValue = 5
   const fn = async () => {
     if (calledTimesCount < 2) {
       calledTimesCount++
-      throw 'error'
+      throw new Error('error')
     } else {
       calledTimesCount++
       return expectedValue
@@ -95,6 +95,18 @@ test('returns value returned by function passed after calls', async () => {
     delays: [100, 100],
   })
   expect(actualValue).toBe(expectedValue)
+})
+
+test('returns default value if max calls exceeded', async () => {
+  const defaultValue = 5
+  const fn = async () => {
+    throw new Error('error')
+  }
+  const actualValue = await fnRetry(fn, {
+    delays: [100, 100],
+    onMaxCallsExceeded: () => defaultValue,
+  })
+  expect(actualValue).toBe(defaultValue)
 })
 
 test('throws an error if wrong fn is passed', () => {

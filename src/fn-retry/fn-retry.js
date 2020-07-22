@@ -26,5 +26,5 @@ export async function fnRetry(fn, options) {
       }
     }
   }
-  _onMaxCallsExceeded()
+  return _onMaxCallsExceeded()
 }

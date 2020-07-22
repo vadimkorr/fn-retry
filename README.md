@@ -40,9 +40,9 @@ const result = await fnRetry(fn, {
 })
 ```
 
-## API
+# API
 
-### **fnRetry**
+## **fnRetry**
 
 Base strategy with custom delays. Fn will be called at least one time. In case of errors it will wait specified amount of ms (delays array) before the next call.
 
@@ -56,13 +56,29 @@ Function that should be retried in case of errors
 
 #### options
 
-| Name               | type       | Default      | Description                                                                                                                                              |
-| ------------------ | ---------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| delays             | `Array`    | `[]`         | Represents delays (in ms) between failed calls, e.g. `[100, 200, 300]` - in case of error fn will be called 4 times, with specified delays between calls |
-| onCallError        | `Function` | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, try: number, maxCalls: number }`                                                   |
-| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of fn calls is exceeded                                                                                                           |
+| Name               | Type       | Default      | Description                                                                                                                                                      |
+| ------------------ | ---------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| delays             | `Array`    | `[]`         | Represents delays (in ms) between failed calls, e.g. `[100, 200, 300]` - in case of error fn will be called 4 times, with specified delays between calls         |
+| onCallError        | `Function` | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, call: number, maxCalls: number }`                                                          |
+| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of fn calls is exceeded. Default value can be returned here. It will be used as returned value of `fnRetry` in case of max calls exceeded |
 
-### **fnRetryWithFibonacci**
+### Example
+
+```js
+const fn = () => {
+  // some function
+  return 'Hello'
+}
+
+const result = await fnRetry(fn, {
+  delays: [100],
+  onCallError: ({ error, call, maxCalls }) =>
+    console.log(`Call ${call}/${maxCalls}: ${error}`),
+  onMaxCallsExceeded: () => console.log('max calls exceeded'),
+})
+```
+
+## **fnRetryWithFibonacci**
 
 Calls fn with max amount of calls. Fn will be called at least one time. In case of errors it will wait according to Fibonacci sequence before the next call, like this: `call failed` -> `wait 1s` -> `call failed` -> `wait 1s` -> `call failed` -> `wait 2s` -> `call failed` -> `wait 3s` -> etc.
 
@@ -76,11 +92,27 @@ Function that should be retried in case of errors
 
 #### options
 
-| Name               | type       | Default      | Description                                                                                                                 |
-| ------------------ | ---------- | ------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| calls              | `number`   | `1`          | Max number of calls, e.g. if `calls` is equal to 2, then flow will look like: `call failed` -> `wait 1s` -> `call succeded` |
-| onCallError        | `Function` | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, try: number, maxCalls: number }`                      |
-| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of fn calls is exceeded                                                                              |
+| Name               | Type       | Default      | Description                                                                                                                                                                   |
+| ------------------ | ---------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| calls              | `number`   | `1`          | Max number of calls, e.g. if `calls` is equal to 2, then flow will look like: `call failed` -> `wait 1s` -> `call succeded`                                                   |
+| onCallError        | `Function` | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, call: number, maxCalls: number }`                                                                       |
+| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of fn calls is exceeded. Default value can be returned here. It will be used as returned value of `fnRetryWithFibonacci` in case of max calls exceeded |
+
+### Example
+
+```js
+const fn = () => {
+  // some function
+  return 'Hello'
+}
+
+const result = await fnRetryWithFibonacci(fn, {
+  calls: 2,
+  onCallError: ({ error, call, maxCalls }) =>
+    console.log(`Call ${call}/${maxCalls}: ${error}`),
+  onMaxCallsExceeded: () => console.log('max calls exceeded'),
+})
+```
 
 ## Testing
 

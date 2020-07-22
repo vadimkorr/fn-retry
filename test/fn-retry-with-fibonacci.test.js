@@ -121,6 +121,18 @@ test('throws an error if wrong fn is passed', () => {
   }).rejects.toEqual(new Error('Incorrect value for fn'))
 })
 
+test('returns default value if max calls exceeded', async () => {
+  const defaultValue = 5
+  const fn = async () => {
+    throw new Error('error')
+  }
+  const actualValue = await fnRetryWithFibonacci(fn, {
+    calls: 2,
+    onMaxCallsExceeded: () => defaultValue,
+  })
+  expect(actualValue).toBe(defaultValue)
+})
+
 test('throws an error if calls is less than 1', () => {
   expect(async () => {
     await fnRetryWithFibonacci(() => {}, {
