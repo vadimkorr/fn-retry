@@ -2,6 +2,7 @@ import { fnRetry } from '../src/fn-retry/fn-retry'
 import { anyDelayFulfilled } from '../test/utils/any-delay-fulfilled'
 import { getExecTimeMs } from '../test/utils/get-exec-time-ms'
 import { getTestObject } from '../test/utils/get-test-object'
+import { errorMessages } from '../src/config'
 
 export const testDelay = async ({
   delays,
@@ -112,5 +113,5 @@ test('returns default value if max calls exceeded', async () => {
 test('throws an error if wrong fn is passed', () => {
   expect(async () => {
     await fnRetry('fn')
-  }).rejects.toEqual(new Error('Incorrect value for fn'))
+  }).rejects.toEqual(new Error(errorMessages.FN_TYPE))
 })

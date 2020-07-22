@@ -2,11 +2,12 @@ import { wait } from '../../src/fn-retry/wait'
 import { addOne } from '../../src/utils/add'
 import { get } from '../../src/utils/get'
 import { getMaxCallsCount } from '../../src/fn-retry/get-max-calls-count'
+import { errorMessages } from '../../src/config'
 
 const defaultFn = () => null
 
 export async function fnRetry(fn, options) {
-  if (typeof fn !== 'function') throw new Error('Incorrect value for fn')
+  if (typeof fn !== 'function') throw new Error(errorMessages.FN_TYPE)
 
   const _onCallError = get(options, 'onCallError', defaultFn)
   const _onMaxCallsExceeded = get(options, 'onMaxCallsExceeded', defaultFn)

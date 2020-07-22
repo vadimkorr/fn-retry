@@ -3,6 +3,7 @@ import { fnRetryWithFibonacci } from '../src/fn-retry-with-fibonacci'
 import { anyDelayFulfilled } from '../test/utils/any-delay-fulfilled'
 import { getExecTimeMs } from '../test/utils/get-exec-time-ms'
 import { getTestObject } from '../test/utils/get-test-object'
+import { errorMessages } from '../src/config'
 
 export const testDelay = async ({
   calls,
@@ -118,7 +119,7 @@ test('returns value returned by fn passed after calls', async () => {
 test('throws an error if wrong fn is passed', () => {
   expect(async () => {
     await fnRetryWithFibonacci('fn')
-  }).rejects.toEqual(new Error('Incorrect value for fn'))
+  }).rejects.toEqual(new Error(errorMessages.FN_TYPE))
 })
 
 test('returns default value if max calls exceeded', async () => {
@@ -138,5 +139,13 @@ test('throws an error if calls is less than 1', () => {
     await fnRetryWithFibonacci(() => {}, {
       calls: 0,
     })
-  }).rejects.toEqual(new Error('At least one call should be done'))
+  }).rejects.toEqual(new Error(errorMessages.CALL_VALUE))
+})
+
+test('throws an error if calls is not a number', () => {
+  expect(async () => {
+    await fnRetryWithFibonacci(() => {}, {
+      calls: '1',
+    })
+  }).rejects.toEqual(new Error(errorMessages.CALL_TYPE))
 })
