@@ -128,7 +128,7 @@ const greet = ({ name }) => `Hello, ${name}!`
 const greetWithRetry = fnRetriable(greet, { delays: [1000] })
 // call retriable version of fn
 const greeting = await greetWithRetry({ name: 'World' })
-console.log(greeting)
+console.log(greeting) // prints: "Hello, World!"
 ```
 
 # Testing
