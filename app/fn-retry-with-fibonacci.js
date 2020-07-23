@@ -1,4 +1,4 @@
-const { fnRetryWithFibonacci } = require('../dist')
+const { fnRetryWithFibonacci, fnRetriableWithFibonacci } = require('../dist')
 
 const main = async () => {
   console.log('===== fnRetryWithFibonacci =====')
@@ -25,6 +25,15 @@ const main = async () => {
       onMaxCallsExceeded: () => console.log('max calls exceeded'),
     }
   )
+
+  console.log('===== fnRetriableWithFibonacci =====')
+  // fn
+  const greet = async name => await `Hello, ${name}!`
+  // wrap fn to make it retriable
+  const greetWithRetry = fnRetriableWithFibonacci(greet, { calls: 2 })
+  // call retriable version of fn
+  const greeting = await greetWithRetry('World')
+  console.log(greeting)
 }
 
 main()

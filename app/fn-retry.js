@@ -1,4 +1,4 @@
-const { fnRetry } = require('../dist')
+const { fnRetry, fnRetriable } = require('../dist')
 
 const main = async () => {
   console.log('===== fnRetry =====')
@@ -25,6 +25,15 @@ const main = async () => {
       onMaxCallsExceeded: () => console.log('max calls exceeded'),
     }
   )
+
+  console.log('===== fnRetriable =====')
+  // fn
+  const greet = async name => await `Hello, ${name}!`
+  // wrap fn to make it retriable
+  const greetWithRetry = fnRetriable('greet', { delays: [1000] })
+  // call retriable version of fn
+  const greeting = await greetWithRetry('World')
+  console.log(greeting)
 }
 
 main()
