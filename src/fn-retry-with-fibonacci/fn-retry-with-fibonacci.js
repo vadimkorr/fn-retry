@@ -8,9 +8,9 @@ export const fnRetryWithFibonacci = async (fn, options) => {
   if (typeof _calls !== 'number') throw new Error(errorMessages.CALL_TYPE)
   if (_calls < 1) throw new Error(errorMessages.CALL_VALUE)
 
-  const delays = getFibonacciMsSequenceByCalls(_calls)
   return fnRetry(fn, {
-    ...options,
-    delays,
+    delays: getFibonacciMsSequenceByCalls(_calls),
+    onCallError: get(options, 'onCallError', defaultFn),
+    onMaxCallsExceeded: get(options, 'onMaxCallsExceeded', defaultFn),
   })
 }
