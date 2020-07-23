@@ -25,6 +25,15 @@ const main = async () => {
       onMaxCallsExceeded: () => console.log('max calls exceeded'),
     }
   )
+
+  console.log('=====> fnRetriable')
+  // fn
+  const greet = ({ name }) => `Hello, ${name}!`
+  // wrap fn to make it retriable
+  const greetWithRetry = fnRetriable(greet, { delays: [1000] })
+  // call retriable version of fn
+  const greeting = await greetWithRetry({ name: 'World' })
+  console.log(greeting)
 }
 
 module.exports = {

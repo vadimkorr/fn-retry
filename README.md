@@ -116,6 +116,21 @@ const result = await fnRetryWithFibonacci(fn, {
 })
 ```
 
+## Higher-order functions: `fnRetriable`, `fnRetriableWithFibonacci`
+
+You can use wrapper version of retry functions. They just wrap `fn` that needs to be retried in case of errors, and return retriable version of the `fn`. See `options` in corresponding APIs above.
+This allows you to use retried version just like you use original `fn`.
+
+```js
+// fn that should be retried in case of errors
+const greet = ({ name }) => `Hello, ${name}!`
+// wrap fn to make it retriable
+const greetWithRetry = fnRetriable(greet, { delays: [1000] })
+// call retriable version of fn
+const greeting = await greetWithRetry({ name: 'World' })
+console.log(greeting)
+```
+
 # Testing
 
 Clone the repository and execute:
