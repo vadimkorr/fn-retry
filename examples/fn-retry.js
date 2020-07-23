@@ -1,7 +1,7 @@
-const { fnRetry } = require('../dist')
+const { fnRetry, fnRetriable } = require('../dist')
 
 const main = async () => {
-  console.log('===== fnRetry =====')
+  console.log('=====> fnRetry')
   const result = await fnRetry(
     () => {
       console.log('fn called')
@@ -13,7 +13,7 @@ const main = async () => {
   )
   console.log(result)
 
-  console.log('===== fnRetry =====')
+  console.log('=====> fnRetry')
   await fnRetry(
     async () => {
       throw new Error('error')
@@ -27,4 +27,6 @@ const main = async () => {
   )
 }
 
-main()
+module.exports = {
+  main,
+}

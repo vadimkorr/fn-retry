@@ -1,7 +1,7 @@
-const { fnRetryWithFibonacci } = require('../dist')
+const { fnRetryWithFibonacci, fnRetriableWithFibonacci } = require('../dist')
 
 const main = async () => {
-  console.log('===== fnRetryWithFibonacci =====')
+  console.log('=====> fnRetryWithFibonacci')
   const result = await fnRetryWithFibonacci(
     () => {
       console.log('fn called')
@@ -13,7 +13,7 @@ const main = async () => {
   )
   console.log(result)
 
-  console.log('===== fnRetryWithFibonacci =====')
+  console.log('=====> fnRetryWithFibonacci')
   await fnRetryWithFibonacci(
     async () => {
       throw new Error('error')
@@ -27,4 +27,6 @@ const main = async () => {
   )
 }
 
-main()
+module.exports = {
+  main,
+}
