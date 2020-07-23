@@ -67,7 +67,7 @@ Function that should be retried in case of errors
 
 ```js
 const fn = () => {
-  // some function
+  // some function that should be retried in case of errors
   return 'Hello'
 }
 
@@ -81,7 +81,8 @@ const result = await fnRetry(fn, {
 
 ## `fnRetryWithFibonacci`
 
-Calls fn with max amount of calls. Fn will be called at least one time. In case of errors it will wait according to Fibonacci sequence before the next call, like this: `call failed` -> `wait 1s` -> `call failed` -> `wait 1s` -> `call failed` -> `wait 2s` -> `call failed` -> `wait 3s` -> etc.
+In case of errors it will wait according to Fibonacci sequence before the next call. Fn will be called at least one time, e.g.:\
+with calls equal to 5: `call failed` -> `wait 1s` -> `call failed` -> `wait 1s` -> `call failed` -> `wait 2s` -> `call failed` -> `wait 3s` -> `call failed`
 
 ```js
 fnRetryWithFibonacci(fn: Function, options: Object) => Promise
@@ -103,7 +104,7 @@ Function that should be retried in case of errors
 
 ```js
 const fn = () => {
-  // some function
+  // some function that should be retried in case of errors
   return 'Hello'
 }
 
