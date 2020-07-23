@@ -124,13 +124,19 @@ You can use wrapper version of retry functions. They just wrap `fn` that needs t
 This allows you to use retried version just like you use original `fn`.
 
 ```js
-// fn that should be retried in case of errors
-const greet = ({ name }) => `Hello, ${name}!`
-// wrap fn to make it retriable
-const greetWithRetry = fnRetriable(greet, { delays: [1000] })
-// call retriable version of fn
-const greeting = await greetWithRetry({ name: 'World' })
-console.log(greeting) // prints: "Hello, World!"
+// function that should be retried in case of errors
+const getPostById = ({ id }) =>
+  fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(response =>
+    response.json()
+  )
+
+// wrap getPostById to make it retriable
+const getPostByIdWithRetry = fnRetriable(getPostById, {
+  delays: [1000],
+})
+// call retriable version of getPostById
+const post = await getPostByIdWithRetry({ id: 1 })
+console.log(post)
 ```
 
 # Testing
