@@ -1,4 +1,5 @@
 const { fnRetry, fnRetriable } = require('../dist')
+const fetch = require('node-fetch')
 
 const main = async () => {
   console.log('=====> fnRetry')
@@ -34,6 +35,20 @@ const main = async () => {
   // call retriable version of fn
   const greeting = await greetWithRetry({ name: 'World' })
   console.log(greeting)
+
+  console.log('=====> fnRetriable (using fetch)')
+  const getPostById = ({ id }) =>
+    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(response =>
+      response.json()
+    )
+
+  // wrap getPostById to make it retriable
+  const getPostByIdWithRetry = fnRetriable(getPostById, {
+    delays: [1000],
+  })
+  // call retriable version of getPostById
+  const post = await getPostByIdWithRetry({ id: 1 })
+  console.log(post)
 }
 
 module.exports = {
