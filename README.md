@@ -122,11 +122,11 @@ This allows you to use retried version just like you use original `fn`.
 
 ```js
 // fn that should be retried in case of errors
-const greet = name => `Hello, ${name}!`
+const greet = ({ name }) => `Hello, ${name}!`
 // wrap fn to make it retriable
 const greetWithRetry = fnRetriable(greet, { delays: [1000] })
 // call retriable version of fn
-const greeting = await greetWithRetry('World')
+const greeting = await greetWithRetry({ name: 'World' })
 console.log(greeting)
 ```
 
