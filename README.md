@@ -43,7 +43,7 @@ const result = await fnRetry(fn, {
 
 # API
 
-## **fnRetry**
+## `fnRetry`
 
 Base strategy with custom delays. Fn will be called at least one time. In case of errors it will wait specified amount of ms (delays array) before the next call.
 
@@ -79,7 +79,7 @@ const result = await fnRetry(fn, {
 })
 ```
 
-## **fnRetryWithFibonacci**
+## `fnRetryWithFibonacci`
 
 Calls fn with max amount of calls. Fn will be called at least one time. In case of errors it will wait according to Fibonacci sequence before the next call, like this: `call failed` -> `wait 1s` -> `call failed` -> `wait 1s` -> `call failed` -> `wait 2s` -> `call failed` -> `wait 3s` -> etc.
 
@@ -115,7 +115,7 @@ const result = await fnRetryWithFibonacci(fn, {
 })
 ```
 
-## Testing
+# Testing
 
 Clone the repository and execute:
 
