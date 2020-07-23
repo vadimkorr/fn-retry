@@ -41,7 +41,7 @@ const result = await fnRetry(fn, {
 })
 ```
 
-[More examples](./example/EXAMPLES.md)
+[More examples](./example)
 
 # API
 
