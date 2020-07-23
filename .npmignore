@@ -14,7 +14,7 @@ yarn.lock
 
 # test
 test
-app
+example
 
 # git
 .gitignore
