@@ -26,7 +26,7 @@ const main = async () => {
     }
   )
 
-  console.log('===== fnRetriableWithFibonacci =====')
+  console.log('=====> fnRetriableWithFibonacci')
   // fn
   const greet = ({ name }) => `Hello, ${name}!`
   // wrap fn to make it retriable

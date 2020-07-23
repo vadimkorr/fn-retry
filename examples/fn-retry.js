@@ -26,7 +26,7 @@ const main = async () => {
     }
   )
 
-  console.log('===== fnRetriable =====')
+  console.log('=====> fnRetriable')
   // fn
   const greet = ({ name }) => `Hello, ${name}!`
   // wrap fn to make it retriable
