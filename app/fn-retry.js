@@ -28,11 +28,11 @@ const main = async () => {
 
   console.log('===== fnRetriable =====')
   // fn
-  const greet = async name => await `Hello, ${name}!`
+  const greet = ({ name }) => `Hello, ${name}!`
   // wrap fn to make it retriable
-  const greetWithRetry = fnRetriable('greet', { delays: [1000] })
+  const greetWithRetry = fnRetriable(greet, { delays: [1000] })
   // call retriable version of fn
-  const greeting = await greetWithRetry('World')
+  const greeting = await greetWithRetry({ name: 'World' })
   console.log(greeting)
 }
 
