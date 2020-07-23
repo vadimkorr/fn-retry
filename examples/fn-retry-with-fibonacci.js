@@ -21,7 +21,7 @@ const main = async () => {
     {
       calls: 2,
       onCallError: ({ error, call, maxCalls }) =>
-        console.log(`Call ${call}/${maxCalls}: ${error}`),
+        console.log(`Call ${call} of ${maxCalls}: ${error}`),
       onMaxCallsExceeded: () => console.log('max calls exceeded'),
     }
   )

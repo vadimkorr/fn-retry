@@ -74,7 +74,7 @@ const fn = () => {
 const result = await fnRetry(fn, {
   delays: [100],
   onCallError: ({ error, call, maxCalls }) =>
-    console.log(`Call ${call}/${maxCalls}: ${error}`),
+    console.log(`Call ${call} of ${maxCalls}: ${error}`),
   onMaxCallsExceeded: () => console.log('max calls exceeded'),
 })
 ```
@@ -111,7 +111,7 @@ const fn = () => {
 const result = await fnRetryWithFibonacci(fn, {
   calls: 2,
   onCallError: ({ error, call, maxCalls }) =>
-    console.log(`Call ${call}/${maxCalls}: ${error}`),
+    console.log(`Call ${call} of ${maxCalls}: ${error}`),
   onMaxCallsExceeded: () => console.log('max calls exceeded'),
 })
 ```
