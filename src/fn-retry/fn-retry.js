@@ -2,9 +2,13 @@ import { wait } from '../../src/fn-retry/wait'
 import { addOne } from '../../src/utils/add'
 import { get } from '../../src/utils/get'
 import { getMaxCallsCount } from '../../src/fn-retry/get-max-calls-count'
-import { errorMessages } from '../../src/config'
+import { errorMessages, defaultFn } from '../../src/config'
 
-const defaultFn = () => null
+const getWaiterValue = waiter => {
+  if (!waiter) return null
+  const state = waiter.next()
+  return state.done ? null : state.value
+}
 
 export async function fnRetry(fn, options) {
   if (typeof fn !== 'function') throw new Error(errorMessages.FN_TYPE)
@@ -14,21 +18,38 @@ export async function fnRetry(fn, options) {
   const _delays = get(options, 'delays', [])
   const _waiter = get(options, 'waiter', null)
 
-  let call = 0
-  while (_waiter || call <= _delays.length) {
-    try {
-      return await fn()
-    } catch (error) {
-      _onCallError({
-        error,
-        call: addOne(call),
-        maxCalls: getMaxCallsCount(_delays),
-      })
-      if (call < _delays.length) {
-        await wait(_waiter ? _waiter.next() : _delays[call])
+  if (_waiter) {
+    let waiterValue = true
+    let call = 1
+    while (waiterValue) {
+      try {
+        return await fn()
+      } catch (error) {
+        _onCallError({
+          error,
+          call,
+        })
+        waiterValue = getWaiterValue(_waiter)
+        waiterValue && (await wait(waiterValue))
+      } finally {
+        call++
       }
-    } finally {
-      call++
+    }
+  } else {
+    let call = 0
+    while (call <= _delays.length) {
+      try {
+        return await fn()
+      } catch (error) {
+        _onCallError({
+          error,
+          call: addOne(call),
+          maxCalls: getMaxCallsCount(_delays),
+        })
+        call < _delays.length && (await wait(_delays[call]))
+      } finally {
+        call++
+      }
     }
   }
   return _onMaxCallsExceeded()

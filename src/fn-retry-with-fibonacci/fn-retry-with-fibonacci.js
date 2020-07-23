@@ -1,7 +1,7 @@
 import { get } from '../../src/utils/get'
 import { fnRetry } from '../../src/fn-retry'
 import { getFibonacciMsSequenceByCalls } from '../../src/fn-retry-with-fibonacci/get-fibonacci-ms-sequence'
-import { errorMessages } from '../../src/config'
+import { errorMessages, defaultFn } from '../../src/config'
 
 export const fnRetryWithFibonacci = async (fn, options) => {
   const _calls = get(options, 'calls', 1)
