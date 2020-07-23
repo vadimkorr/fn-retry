@@ -12,8 +12,10 @@ export async function fnRetry(fn, options) {
   const _onCallError = get(options, 'onCallError', defaultFn)
   const _onMaxCallsExceeded = get(options, 'onMaxCallsExceeded', defaultFn)
   const _delays = get(options, 'delays', [])
+  const _waiter = get(options, 'waiter', null)
 
-  for (let call = 0; call <= _delays.length; call++) {
+  let call = 0
+  while (_waiter || call <= _delays.length) {
     try {
       return await fn()
     } catch (error) {
@@ -23,8 +25,10 @@ export async function fnRetry(fn, options) {
         maxCalls: getMaxCallsCount(_delays),
       })
       if (call < _delays.length) {
-        await wait(_delays[call])
+        await wait(_waiter ? _waiter.next() : _delays[call])
       }
+    } finally {
+      call++
     }
   }
   return _onMaxCallsExceeded()
