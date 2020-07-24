@@ -1,6 +1,6 @@
 {
   "name": "fn-retry",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Retry failed function call",
   "main": "./dist/index.js",
   "directories": {
