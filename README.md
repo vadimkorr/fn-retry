@@ -59,15 +59,18 @@ Function that should be retried in case of errors
 
 #### options
 
-| Name               | Type       | Default      | Description                                                                                                                                                      |
-| ------------------ | ---------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| delays             | `Array`    | `[]`         | Represents delays (in ms) between failed calls, e.g. `[100, 200, 300]` - in case of error fn will be called 4 times, with specified delays between calls         |
-| onCallError        | `Function` | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, call: number, maxCalls: number }`                                                          |
-| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of fn calls is exceeded. Default value can be returned here. It will be used as returned value of `fnRetry` in case of max calls exceeded |
+| Name               | Type       | Default      | Description                                                                                                                                                                                   |
+| ------------------ | ---------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| delays             | `Array`    | `[]`         | Represents delays (in ms) between failed calls, e.g. `[100, 200, 300]` - in case of error fn will be called 4 times, with specified delays between calls                                      |
+| onCallError        | `Function` | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, call: number, maxCalls: number }`                                                                                       |
+| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of fn calls is exceeded. Default value can be returned here. It will be used as returned value of `fnRetry` in case of max calls exceeded                              |
+| waiter             | `Iterator` | `null`       | If passed, `delays` option will be ignored. Represents iterator of delay values. Can be used for making till-success calls. In this case `maxCalls` is not passed from `onCallError` callback |
 
 ### Example
 
 ```js
+// Base example
+
 const fn = () => {
   // some function that should be retried in case of errors
   return 'Hello'
@@ -78,6 +81,43 @@ const result = await fnRetry(fn, {
   onCallError: ({ error, call, maxCalls }) =>
     console.log(`Call ${call} of ${maxCalls}: ${error}`),
   onMaxCallsExceeded: () => console.log('max calls exceeded'),
+})
+
+// Example with generator, till-success strategy
+
+const fn = () => {
+  // ...
+}
+
+function* waiter() {
+  let waitMs = 100
+  while (true) {
+    yield waitMs
+    waitMs *= 2
+  }
+}
+await fnRetry(fn, {
+  waiter: waiter(),
+  onCallError: ({ error, call }) => console.log(`Call ${call}: ${error}`),
+})
+
+// Example with generator, custom delays
+
+const fn = () => {
+  // ...
+}
+
+// it is the same as passing delays: [ 100, 200, 400, 800, 600 ]
+function* waiter() {
+  let waitMs = 100
+  for (let i = 0; i < 5; i++) {
+    yield waitMs
+    waitMs *= 2
+  }
+}
+await fnRetry(fn, {
+  waiter: waiter(),
+  onMaxCallsExceeded: () => ({}),
 })
 ```
 

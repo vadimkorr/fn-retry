@@ -8,10 +8,10 @@ const getValuesFromIterator = iterator => {
   const values = []
   while (true) {
     let result = iterator.next()
-    result.value !== undefined && values.push(result.value)
     if (result.done) {
       break
     }
+    values.push(result.value)
   }
   return values
 }
@@ -46,17 +46,16 @@ export const testDelay = async ({
   expect(actual.errorCallsCount).toBe(expected.errorCallsCount)
 }
 
-function* getWaiter(delaysCount) {
-  if (delaysCount === 0) return undefined
+function* waiter(delaysCount) {
+  if (delaysCount === 0) return
   let call = 0
   let waitMs = 100
   // one more delay is in return
-  while (call < delaysCount - 1) {
+  while (call < delaysCount) {
     yield waitMs
     waitMs *= 2
     call++
   }
-  return waitMs
 }
 
 test('calls specified amount of times if fn is failed', async () => {
@@ -69,7 +68,7 @@ test('calls specified amount of times if fn is failed', async () => {
     ...setup,
   })
   await testDelay({
-    waiter: () => getWaiter(1),
+    waiter: () => waiter(1),
     ...setup,
   })
 })
@@ -84,7 +83,7 @@ test("doesn't retry if first call is successfull", async () => {
     ...setup,
   })
   await testDelay({
-    waiter: () => getWaiter(1),
+    waiter: () => waiter(1),
     ...setup,
   })
 })
@@ -99,7 +98,7 @@ test('calls one time if second call is successfull', async () => {
     ...setup,
   })
   await testDelay({
-    waiter: () => getWaiter(2),
+    waiter: () => waiter(2),
     ...setup,
   })
 })
@@ -114,7 +113,7 @@ test("doesn't retry if delays is empty (calls only ones)", async () => {
     ...setup,
   })
   await testDelay({
-    waiter: () => getWaiter(0),
+    waiter: () => waiter(0),
     ...setup,
   })
 })
@@ -129,7 +128,7 @@ test("doesn't retry if delays is empty, but call is failed", async () => {
     ...setup,
   })
   await testDelay({
-    waiter: () => getWaiter(0),
+    waiter: () => waiter(0),
     ...setup,
   })
 })

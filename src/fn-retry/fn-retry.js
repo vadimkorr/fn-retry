@@ -6,9 +6,7 @@ import { errorMessages, defaultFn } from '../../src/config'
 const getWaiterValue = waiter => {
   if (!waiter) return null
   const state = waiter.next()
-  // { done: true, value: undefined } stops loop
-  // { done: true, value: 100 } this kind of object is considered as last value
-  return state.done && state.value === undefined ? null : state.value
+  return state.done ? null : state.value
 }
 
 export const fnRetry = async (fn, options) => {
