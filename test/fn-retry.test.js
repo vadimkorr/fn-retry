@@ -4,21 +4,36 @@ import { getExecTimeMs } from '../test/utils/get-exec-time-ms'
 import { getTestObject } from '../test/utils/get-test-object'
 import { errorMessages } from '../src/config'
 
+const getValuesFromIterator = iterator => {
+  const values = []
+  while (true) {
+    let result = iterator.next()
+    result.value !== undefined && values.push(result.value)
+    if (result.done) {
+      break
+    }
+  }
+  return values
+}
+
 export const testDelay = async ({
   delays,
   failedCallsMap,
   expectedIsMaxCallsExceeded,
+  waiter,
 }) => {
+  const _delays = waiter ? getValuesFromIterator(waiter()) : delays
   const {
     getFn,
     getStats,
     handleCallError,
     handleMaxCallsExceeded,
-  } = getTestObject(delays, failedCallsMap)
+  } = getTestObject(_delays, failedCallsMap)
   const fn = getFn()
   const execTime = await getExecTimeMs(() =>
     fnRetry(fn, {
       delays,
+      waiter: waiter && waiter(),
       onCallError: handleCallError,
       onMaxCallsExceeded: handleMaxCallsExceeded,
     })
@@ -26,48 +41,96 @@ export const testDelay = async ({
   const { actual, expected } = getStats()
   expect(actual.callsCount).toBe(expected.callsCount)
   expect(execTime).toBeWithinRangeEps(expected.waitingTimeMs)
-  expect(anyDelayFulfilled(actual.delays, delays)).toBe(true)
+  expect(anyDelayFulfilled(actual.delays, _delays)).toBe(true)
   expect(actual.isMaxCallsExceeded).toBe(expectedIsMaxCallsExceeded)
   expect(actual.errorCallsCount).toBe(expected.errorCallsCount)
 }
 
+function* getWaiter(delaysCount) {
+  if (delaysCount === 0) return undefined
+  let call = 0
+  let waitMs = 100
+  // one more delay is in return
+  while (call < delaysCount - 1) {
+    yield waitMs
+    waitMs *= 2
+    call++
+  }
+  return waitMs
+}
+
 test('calls specified amount of times if fn is failed', async () => {
-  await testDelay({
-    delays: [100],
+  const setup = {
     failedCallsMap: [true, true],
     expectedIsMaxCallsExceeded: true,
+  }
+  await testDelay({
+    delays: [100],
+    ...setup,
+  })
+  await testDelay({
+    waiter: () => getWaiter(1),
+    ...setup,
   })
 })
 
 test("doesn't retry if first call is successfull", async () => {
-  await testDelay({
-    delays: [100],
+  const setup = {
     failedCallsMap: [false, false],
     expectedIsMaxCallsExceeded: false,
+  }
+  await testDelay({
+    delays: [100],
+    ...setup,
+  })
+  await testDelay({
+    waiter: () => getWaiter(1),
+    ...setup,
   })
 })
 
 test('calls one time if second call is successfull', async () => {
-  await testDelay({
-    delays: [100, 100],
+  const setup = {
     failedCallsMap: [true, false, false],
     expectedIsMaxCallsExceeded: false,
+  }
+  await testDelay({
+    delays: [100, 100],
+    ...setup,
+  })
+  await testDelay({
+    waiter: () => getWaiter(2),
+    ...setup,
   })
 })
 
 test("doesn't retry if delays is empty (calls only ones)", async () => {
-  await testDelay({
-    delays: [],
+  const setup = {
     failedCallsMap: [false],
     expectedIsMaxCallsExceeded: false,
+  }
+  await testDelay({
+    delays: [],
+    ...setup,
+  })
+  await testDelay({
+    waiter: () => getWaiter(0),
+    ...setup,
   })
 })
 
 test("doesn't retry if delays is empty, but call is failed", async () => {
-  await testDelay({
-    delays: [],
+  const setup = {
     failedCallsMap: [true],
     expectedIsMaxCallsExceeded: true,
+  }
+  await testDelay({
+    delays: [],
+    ...setup,
+  })
+  await testDelay({
+    waiter: () => getWaiter(0),
+    ...setup,
   })
 })
 
