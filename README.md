@@ -1,14 +1,16 @@
-# fn-retry
+![fn-retry](https://pbs.twimg.com/media/EduUvk-XYAAQ7ag?format=png&name=large)
 
-Retry failed function call.\
-Dependency-free, tiny (~1.5 kb gzipped) and powerfull.
+<div align="center">
+<strong>Retry failed function call.</strong>
+<br />
+<strong>Dependency-free, tiny (~1.5 kb gzipped) and powerfull.</strong>
 
 [![npm](https://img.shields.io/npm/v/fn-retry.svg)](https://www.npmjs.com/package/fn-retry) [![npm](https://img.shields.io/npm/dm/fn-retry.svg)](https://www.npmjs.com/package/fn-retry)
 <br />
 [![GitHub repo](https://img.shields.io/badge/github-repo-green.svg?style=flat)](https://github.com/vadimkorr/fn-retry) [![GitHub followers](https://img.shields.io/github/followers/vadimkorr.svg?style=social&label=Follow)](https://github.com/vadimkorr)
 <br />
-[![npm](https://img.shields.io/npm/l/fn-retry.svg)](https://www.npmjs.com/package/fn-retry)
-<br />
+
+</div>
 
 ## Installation
 
