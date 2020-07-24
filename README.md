@@ -185,4 +185,5 @@ Clone the repository and execute:
 
 ```bash
 yarn test
+npm test
 ```
