@@ -8,6 +8,29 @@ test('returns value returned by fn passed if called without an error', async () 
   expect(actualValue).toBe(15)
 })
 
+test('can be called multiple times', async () => {
+  const callTimes = 2
+  const retries = 3
+  function* waiter() {
+    for (let i = 0; i < retries; i++) {
+      yield 100
+    }
+  }
+  let calls = 0
+  const fn = () => {
+    calls++
+    throw 'Error'
+  }
+
+  const fnWithRetry = fnRetriable(fn, {
+    waiter,
+  })
+  for (let i = 0; i < callTimes; i++) {
+    await fnWithRetry()
+  }
+  expect(calls).toBe(callTimes + callTimes * retries)
+})
+
 test('returns value returned by fn passed after number of calls', async () => {
   let calledTimesCount = 0
   const fn = a => {
