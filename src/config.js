@@ -3,3 +3,5 @@ export const errorMessages = {
   CALL_VALUE: '"Call" should be equal to 1 or more',
   FN_TYPE: '"fn" should be function',
 }
+
+export const defaultFn = () => null
