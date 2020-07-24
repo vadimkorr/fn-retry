@@ -59,12 +59,12 @@ Function that should be retried in case of errors
 
 #### options
 
-| Name               | Type       | Default      | Description                                                                                                                                                                                   |
-| ------------------ | ---------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| delays             | `Array`    | `[]`         | Represents delays (in ms) between failed calls, e.g. `[100, 200, 300]` - in case of error fn will be called 4 times, with specified delays between calls                                      |
-| onCallError        | `Function` | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, call: number, maxCalls: number }`                                                                                       |
-| onMaxCallsExceeded | `Function` | `() => null` | Called when max number of fn calls is exceeded. Default value can be returned here. It will be used as returned value of `fnRetry` in case of max calls exceeded                              |
-| waiter             | `Iterator` | `null`       | If passed, `delays` option will be ignored. Represents iterator of delay values. Can be used for making till-success calls. In this case `maxCalls` is not passed from `onCallError` callback |
+| Name               | Type        | Default      | Description                                                                                                                                                                                    |
+| ------------------ | ----------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| delays             | `Array`     | `[]`         | Represents delays (in ms) between failed calls, e.g. `[100, 200, 300]` - in case of error fn will be called 4 times, with specified delays between calls                                       |
+| onCallError        | `Function`  | `() => null` | Called on failed fn call with objects as an argument `{ error: Error, call: number, maxCalls: number }`                                                                                        |
+| onMaxCallsExceeded | `Function`  | `() => null` | Called when max number of fn calls is exceeded. Default value can be returned here. It will be used as returned value of `fnRetry` in case of max calls exceeded                               |
+| waiter             | `Generator` | `null`       | If passed, `delays` option will be ignored. Represents generator of delay values. Can be used for making till-success calls. In this case `maxCalls` is not passed from `onCallError` callback |
 
 ### Example
 
@@ -97,7 +97,7 @@ function* waiter() {
   }
 }
 await fnRetry(fn, {
-  waiter: waiter(),
+  waiter,
   onCallError: ({ error, call }) => console.log(`Call ${call}: ${error}`),
 })
 
@@ -116,7 +116,7 @@ function* waiter() {
   }
 }
 await fnRetry(fn, {
-  waiter: waiter(),
+  waiter,
   onMaxCallsExceeded: () => ({}),
 })
 ```

@@ -1,12 +1,13 @@
 const { fnRetry, fnRetriable } = require('../dist')
 
-function* waiterWithMaxRetries(retries) {
-  let waitMs = 100
-  for (let i = 0; i < retries; i++) {
-    yield waitMs
-    waitMs *= 2
+const getWaiterWithMaxRetries = retries =>
+  function* waiterWithMaxRetries() {
+    let waitMs = 100
+    for (let i = 0; i < retries; i++) {
+      yield waitMs
+      waitMs *= 2
+    }
   }
-}
 
 const main = async () => {
   // fnRetry, with generator, with max retries
@@ -15,7 +16,7 @@ const main = async () => {
     await fnRetry(
       () => fetch(), // fetch is not imported to trigger an error
       {
-        waiter: waiterWithMaxRetries(5),
+        waiter: getWaiterWithMaxRetries(5),
         onCallError: errorData => console.log(errorData),
       }
     )
@@ -34,7 +35,7 @@ const main = async () => {
     await fnRetry(
       () => fetch(), // fetch is not imported to trigger an error
       {
-        waiter: waiter(),
+        waiter,
         onCallError: ({ error }) => console.log(error),
       }
     )
@@ -56,7 +57,7 @@ const main = async () => {
     await fnRetry(
       () => fetch(), // fetch is not imported to trigger an error
       {
-        waiter: getDelays(),
+        waiter: () => getDelays(),
         onCallError: ({ error }) => console.log(error),
       }
     )
@@ -68,13 +69,14 @@ const main = async () => {
     const getData = ({ id }) => fetch(id) // fetch is not imported to trigger an error
     // wrap fn to make it retriable
     const getDataWithRetry = fnRetriable(getData, {
-      waiter: waiterWithMaxRetries(5),
+      waiter: getWaiterWithMaxRetries(5),
       onCallError: ({ call, error }) => console.log(`Call ${call}: ${error}`),
       onMaxCallsExceeded: () => ({}),
     })
     // call retriable version of fn
-    const data = await getDataWithRetry({ id: 1 })
-    console.log(data)
+    console.log(await getDataWithRetry({ id: 1 }))
+    console.log('using same func one more time')
+    console.log(await getDataWithRetry({ id: 1 }))
   }
 }
 

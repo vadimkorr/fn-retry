@@ -11,6 +11,7 @@ export const fnRetry = async (fn, options) => {
   const _delays = get(options, 'delays', [])
   const _waiter = get(options, 'waiter', null)
 
+  let iterator = _waiter && _waiter()
   let iteratorDone = false
   let call = 0
 
@@ -26,7 +27,7 @@ export const fnRetry = async (fn, options) => {
 
       let waitMs = 0
       if (_waiter) {
-        const { done, value } = _waiter.next()
+        const { done, value } = iterator.next()
         iteratorDone = done
         waitMs = value
       } else {
