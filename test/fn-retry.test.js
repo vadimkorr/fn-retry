@@ -3,18 +3,8 @@ import { anyDelayFulfilled } from '../test/utils/any-delay-fulfilled'
 import { getExecTimeMs } from '../test/utils/get-exec-time-ms'
 import { getTestObject } from '../test/utils/get-test-object'
 import { errorMessages } from '../src/config'
-
-const getValuesFromIterator = iterator => {
-  const values = []
-  while (true) {
-    let result = iterator.next()
-    if (result.done) {
-      break
-    }
-    values.push(result.value)
-  }
-  return values
-}
+import { getWaiter } from '../test/utils/get-waiter'
+import { getValuesFromGenerator } from '../test/utils/get-values-from-generator'
 
 export const testDelay = async ({
   delays,
@@ -22,7 +12,7 @@ export const testDelay = async ({
   expectedIsMaxCallsExceeded,
   waiter,
 }) => {
-  const _delays = waiter ? getValuesFromIterator(waiter()) : delays
+  const _delays = waiter ? getValuesFromGenerator(waiter) : delays
   const {
     getFn,
     getStats,
@@ -45,19 +35,6 @@ export const testDelay = async ({
   expect(actual.isMaxCallsExceeded).toBe(expectedIsMaxCallsExceeded)
   expect(actual.errorCallsCount).toBe(expected.errorCallsCount)
 }
-
-const getWaiter = delaysCount =>
-  function* waiter() {
-    if (delaysCount === 0) return
-    let call = 0
-    let waitMs = 100
-    // one more delay is in return
-    while (call < delaysCount) {
-      yield waitMs
-      waitMs *= 2
-      call++
-    }
-  }
 
 test('calls specified amount of times if fn is failed', async () => {
   const setup = {
