@@ -4,6 +4,7 @@ config
 .prettierrc.js
 babel.config.js
 jest.config.js
+.travis.yml
 
 # src
 src
@@ -15,6 +16,7 @@ yarn.lock
 # test
 test
 example
+coverage
 
 # git
 .gitignore
