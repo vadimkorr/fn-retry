@@ -150,6 +150,28 @@ test('returns default value if max calls exceeded', async () => {
   expect(actualValue).toBe(defaultValue)
 })
 
+test("doesn't continue to retry if user condition shouldStopRetries returnes true", async () => {
+  let call = 0
+  const callIndexWithSpecialError = 2
+  const defaultValue = 5
+  const fn = async () => {
+    if (call === callIndexWithSpecialError) {
+      call++
+      throw new Error('special error')
+    } else {
+      call++
+      throw new Error('error')
+    }
+  }
+  const actualValue = await fnRetry(fn, {
+    delays: [100, 100, 100, 100],
+    onCallError: ({ error }) => error.message === 'special error', // should stop retries
+    onMaxCallsExceeded: () => defaultValue,
+  })
+  expect(call).toBe(callIndexWithSpecialError + 1) // +1 as zero based
+  expect(actualValue).toBe(defaultValue)
+})
+
 test('throws an error if wrong fn is passed', () => {
   expect(async () => {
     await fnRetry('fn')
