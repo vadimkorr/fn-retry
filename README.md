@@ -37,9 +37,10 @@ const fn = () => {
   return 'Hello'
 }
 
-fnRetry(fn, {
+const result = await fnRetry(fn, {
   delays: [100, 200, 300], // in case of error fn will be called 4 times, with specified delays between calls
-}).then(result => console.log(result))
+})
+console.log(result)
 ```
 
 ### CommonJS
@@ -53,9 +54,10 @@ const fn = () => {
   return 'Hello'
 }
 
-fnRetry(fn, {
+const result = await fnRetry(fn, {
   delays: [100, 200, 300], // in case of error fn will be called 4 times, with specified delays between calls
-}).then(result => console.log(result))
+})
+console.log(result)
 ```
 
 [More examples](./example)
