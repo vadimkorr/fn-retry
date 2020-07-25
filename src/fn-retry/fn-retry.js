@@ -3,6 +3,14 @@ import { get } from '../../src/utils/get'
 import { getMaxCallsCount } from '../../src/fn-retry/get-max-calls-count'
 import { errorMessages, defaultFn } from '../../src/config'
 
+const getIterationData = ({ delays, waiter, iterator, call }) =>
+  waiter
+    ? iterator.next()
+    : {
+        value: delays[call],
+        done: call >= delays.length,
+      }
+
 export const fnRetry = async (fn, options) => {
   if (typeof fn !== 'function') throw new Error(errorMessages.FN_TYPE)
 
@@ -11,20 +19,11 @@ export const fnRetry = async (fn, options) => {
   const _delays = get(options, 'delays', [])
   const _waiter = get(options, 'waiter', null)
 
-  let iterator = _waiter && _waiter()
-  let iteratorDone = false
+  const iterator = _waiter && _waiter()
+  let _done = false
   let call = 0
 
-  const getWaitMs = () => {
-    if (_waiter) {
-      const { done, value } = iterator.next()
-      iteratorDone = done
-      return value
-    }
-    return call < _delays.length ? _delays[call] : 0
-  }
-
-  while (_waiter ? !iteratorDone : call <= _delays.length) {
+  while (!_done) {
     try {
       return await fn()
     } catch (error) {
@@ -33,8 +32,14 @@ export const fnRetry = async (fn, options) => {
         call: call + 1, // as call starts from 0, show user friendly value
         ...(_waiter ? {} : { maxCalls: getMaxCallsCount(_delays) }),
       })
-      const waitMs = getWaitMs()
-      waitMs && (await wait(waitMs))
+      const { value, done } = getIterationData({
+        waiter: _waiter,
+        delays: _delays,
+        call,
+        iterator,
+      })
+      value && (await wait(value))
+      _done = done
       call++
     }
   }
