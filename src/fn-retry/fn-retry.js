@@ -27,11 +27,14 @@ export const fnRetry = async (fn, options) => {
     try {
       return await fn()
     } catch (error) {
-      _onCallError({
+      const shouldStopRetries = _onCallError({
         error,
         call: call + 1, // as call starts from 0, show user friendly value
         ...(_waiter ? {} : { maxCalls: getMaxCallsCount(_delays) }),
       })
+      if (shouldStopRetries === true) {
+        break
+      }
       const { value, done } = getIterationData({
         waiter: _waiter,
         delays: _delays,

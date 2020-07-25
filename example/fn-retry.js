@@ -49,6 +49,25 @@ const main = async () => {
   // call retriable version of getPostById
   const post = await getPostByIdWithRetry({ id: 1 })
   console.log(post)
+
+  console.log('=====> fnRetriable with shouldStopRetries')
+  const getPostById = ({ id }) =>
+    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(response =>
+      response.json()
+    )
+
+  // wrap getPostById to make it retriable
+  const getPostByIdWithRetry = fnRetriable(getPostById, {
+    delays: [100, 200, 300, 400, 500],
+    onCallError: ({ error }) => {
+      console.log(`Call ${call}: ${error.message}`)
+      // it should stop retries if auth error occured
+      return error.message === 'Authorization failed'
+    },
+    onMaxCallsExceeded: () => ({}), // still can return default value
+  })
+  const post = await getPostByIdWithRetry({ id: 1 })
+  console.log(post)
 }
 
 module.exports = {
