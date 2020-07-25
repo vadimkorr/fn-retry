@@ -12,6 +12,8 @@
 <br />
 [![GitHub repo](https://img.shields.io/badge/github-repo-green.svg?style=flat)](https://github.com/vadimkorr/fn-retry) [![GitHub followers](https://img.shields.io/github/followers/vadimkorr.svg?style=social&label=Follow)](https://github.com/vadimkorr)
 <br />
+[![Build Status](https://travis-ci.org/vadimkorr/fn-retry.svg?branch=master)](https://travis-ci.org/vadimkorr/fn-retry)
+<br />
 
 </div>
 
