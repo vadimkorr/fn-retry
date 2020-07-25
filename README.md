@@ -38,7 +38,7 @@ const fn = () => {
 }
 
 const result = await fnRetry(fn, {
-  delays: [100, 200, 300], // in case of error fn will be called 4 times, with specified delays between calls
+  delays: [100, 200, 300],
 })
 console.log(result)
 ```
@@ -55,7 +55,7 @@ const fn = () => {
 }
 
 const result = await fnRetry(fn, {
-  delays: [100, 200, 300], // in case of error fn will be called 4 times, with specified delays between calls
+  delays: [100, 200, 300],
 })
 console.log(result)
 ```
