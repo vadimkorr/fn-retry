@@ -15,6 +15,15 @@ export const fnRetry = async (fn, options) => {
   let iteratorDone = false
   let call = 0
 
+  const getWaitMs = () => {
+    if (_waiter) {
+      const { done, value } = iterator.next()
+      iteratorDone = done
+      return value
+    }
+    return call < _delays.length ? _delays[call] : 0
+  }
+
   while (_waiter ? !iteratorDone : call <= _delays.length) {
     try {
       return await fn()
@@ -24,17 +33,8 @@ export const fnRetry = async (fn, options) => {
         call: call + 1, // as call starts from 0, show user friendly value
         ...(_waiter ? {} : { maxCalls: getMaxCallsCount(_delays) }),
       })
-
-      let waitMs = 0
-      if (_waiter) {
-        const { done, value } = iterator.next()
-        iteratorDone = done
-        waitMs = value
-      } else {
-        waitMs = call < _delays.length ? _delays[call] : 0
-      }
+      const waitMs = getWaitMs()
       waitMs && (await wait(waitMs))
-    } finally {
       call++
     }
   }
