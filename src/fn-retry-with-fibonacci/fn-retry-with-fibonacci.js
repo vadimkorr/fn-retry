@@ -1,5 +1,5 @@
 import { get } from '../../src/utils/get'
-import { fnRetry } from '../../src/fn-retry'
+import { fnRetry } from '../../src/fn-retry/fn-retry'
 import { getFibonacciMsSequenceByCalls } from '../../src/fn-retry-with-fibonacci/get-fibonacci-ms-sequence'
 import { errorMessages, defaultFn } from '../../src/config'
 
