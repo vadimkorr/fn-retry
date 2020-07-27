@@ -1,4 +1,4 @@
-import { fnRetriable } from '../src/fn-retry'
+import { fnRetriable } from '../src/fn-retry/fn-retriable'
 import { errorMessages } from '../src/config'
 
 test('returns value returned by fn passed if called without an error', async () => {

@@ -1,5 +1,5 @@
 import { getFibonacciMsSequenceByCalls } from '../src/fn-retry-with-fibonacci/get-fibonacci-ms-sequence'
-import { fnRetryWithFibonacci } from '../src/fn-retry-with-fibonacci'
+import { fnRetryWithFibonacci } from '../src/fn-retry-with-fibonacci/fn-retry-with-fibonacci'
 import { anyDelayFulfilled } from '../test/utils/any-delay-fulfilled'
 import { getExecTimeMs } from '../test/utils/get-exec-time-ms'
 import { getTestObject } from '../test/utils/get-test-object'

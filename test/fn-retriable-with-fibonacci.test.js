@@ -1,4 +1,4 @@
-import { fnRetriableWithFibonacci } from '../src/fn-retry-with-fibonacci'
+import { fnRetriableWithFibonacci } from '../src/fn-retry-with-fibonacci/fn-retriable-with-fibonacci'
 import { errorMessages } from '../src/config'
 
 test('returns value returned by fn passed if called without an error', async () => {
